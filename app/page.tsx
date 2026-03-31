@@ -17,7 +17,7 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Link
               href="/kota"
-              className="group relative bg-mzansi-yellow text-mzansi-black px-10 py-6 rounded-2xl hover:bg-yellow-300 transition-all hover:scale-105"
+              className="group relative bg-mzansi-yellow text-mzansi-black w-64 py-6 rounded-2xl hover:bg-yellow-300 transition-all hover:scale-105 text-center"
             >
               <span className="heading-bold text-3xl md:text-4xl block">Kota</span>
               <span className="text-sm font-sans font-medium opacity-70 mt-1 block">
@@ -27,7 +27,7 @@ export default function HomePage() {
 
             <Link
               href="/bunny-chow"
-              className="group relative bg-mzansi-red text-white px-10 py-6 rounded-2xl hover:bg-red-700 transition-all hover:scale-105"
+              className="group relative bg-mzansi-red text-white w-64 py-6 rounded-2xl hover:bg-red-700 transition-all hover:scale-105 text-center"
             >
               <span className="heading-bold text-3xl md:text-4xl block">Bunny Chow</span>
               <span className="text-sm font-sans font-medium opacity-70 mt-1 block">

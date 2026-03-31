@@ -1,10 +1,37 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { getAccount, deleteSession } from '../../lib/appwrite';
+
+interface User {
+  name: string;
+  email: string;
+}
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    getAccount()
+      .then(setUser)
+      .catch(() => setUser(null));
+  }, []);
+
+  async function handleLogout() {
+    try {
+      await deleteSession();
+      setUser(null);
+      setOpen(false);
+      router.push('/');
+      router.refresh();
+    } catch {
+      setUser(null);
+    }
+  }
 
   return (
     <nav className="bg-mzansi-black text-white">
@@ -18,9 +45,23 @@ export default function Navbar() {
           <Link href="/kota" className="hover:text-mzansi-yellow transition">Kota</Link>
           <Link href="/bunny-chow" className="hover:text-mzansi-yellow transition">Bunny Chow</Link>
           <Link href="/recipes" className="hover:text-mzansi-yellow transition">Recipes</Link>
-          <Link href="/auth" className="bg-mzansi-yellow text-mzansi-black px-4 py-1.5 rounded-full hover:bg-yellow-300 transition">
-            Sign In
-          </Link>
+          {user ? (
+            <div className="flex items-center gap-4">
+              <span className="text-mzansi-yellow normal-case tracking-normal text-sm">
+                {user.name || user.email}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="bg-mzansi-red text-white px-4 py-1.5 rounded-full hover:bg-red-700 transition text-xs"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <Link href="/auth" className="bg-mzansi-yellow text-mzansi-black px-4 py-1.5 rounded-full hover:bg-yellow-300 transition">
+              Sign In
+            </Link>
+          )}
         </div>
 
         {/* Mobile hamburger */}
@@ -45,7 +86,21 @@ export default function Navbar() {
           <Link href="/kota" onClick={() => setOpen(false)} className="block hover:text-mzansi-yellow">Kota</Link>
           <Link href="/bunny-chow" onClick={() => setOpen(false)} className="block hover:text-mzansi-yellow">Bunny Chow</Link>
           <Link href="/recipes" onClick={() => setOpen(false)} className="block hover:text-mzansi-yellow">Recipes</Link>
-          <Link href="/auth" onClick={() => setOpen(false)} className="block text-mzansi-yellow">Sign In</Link>
+          {user ? (
+            <>
+              <p className="text-mzansi-yellow normal-case tracking-normal text-sm pt-2 border-t border-gray-700">
+                {user.name || user.email}
+              </p>
+              <button
+                onClick={handleLogout}
+                className="block text-mzansi-red hover:text-red-400"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <Link href="/auth" onClick={() => setOpen(false)} className="block text-mzansi-yellow">Sign In</Link>
+          )}
         </div>
       )}
     </nav>
