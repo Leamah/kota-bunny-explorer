@@ -1,26 +1,86 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --mzansi-yellow: #FFCC00;
+  --mzansi-red: #C41E3A;
+  --mzansi-teal: #008080;
+  --mzansi-orange: #FF6B35;
+  --mzansi-black: #1A1A1A;
+  --mzansi-cream: #FFF8E7;
+  --mzansi-gray: #F5F5F5;
+  --background: #FFF8E7;
+  --foreground: #1A1A1A;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-mzansi-yellow: var(--mzansi-yellow);
+  --color-mzansi-red: var(--mzansi-red);
+  --color-mzansi-teal: var(--mzansi-teal);
+  --color-mzansi-orange: var(--mzansi-orange);
+  --color-mzansi-black: var(--mzansi-black);
+  --color-mzansi-cream: var(--mzansi-cream);
+  --color-mzansi-gray: var(--mzansi-gray);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Impact', 'Arial Black', Arial, Helvetica, sans-serif;
+}
+
+/* Ndebele-inspired geometric border pattern */
+.ndebele-border {
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      var(--mzansi-yellow) 0px, var(--mzansi-yellow) 20px,
+      var(--mzansi-red) 20px, var(--mzansi-red) 40px,
+      var(--mzansi-teal) 40px, var(--mzansi-teal) 60px,
+      var(--mzansi-orange) 60px, var(--mzansi-orange) 80px
+    );
+  height: 6px;
+}
+
+/* Geometric pattern background */
+.geo-pattern {
+  background-color: var(--mzansi-cream);
+  background-image:
+    linear-gradient(30deg, var(--mzansi-yellow) 12%, transparent 12.5%, transparent 87%, var(--mzansi-yellow) 87.5%, var(--mzansi-yellow)),
+    linear-gradient(150deg, var(--mzansi-yellow) 12%, transparent 12.5%, transparent 87%, var(--mzansi-yellow) 87.5%, var(--mzansi-yellow)),
+    linear-gradient(30deg, var(--mzansi-yellow) 12%, transparent 12.5%, transparent 87%, var(--mzansi-yellow) 87.5%, var(--mzansi-yellow)),
+    linear-gradient(150deg, var(--mzansi-yellow) 12%, transparent 12.5%, transparent 87%, var(--mzansi-yellow) 87.5%, var(--mzansi-yellow)),
+    linear-gradient(60deg, var(--mzansi-cream) 25%, transparent 25.5%, transparent 75%, var(--mzansi-cream) 75%),
+    linear-gradient(60deg, var(--mzansi-cream) 25%, transparent 25.5%, transparent 75%, var(--mzansi-cream) 75%);
+  background-size: 40px 70px;
+  background-position: 0 0, 0 0, 20px 35px, 20px 35px, 0 0, 20px 35px;
+  opacity: 0.04;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Bold Nando's-style heading */
+.heading-bold {
+  font-family: 'Impact', 'Arial Black', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+}
+
+/* Card hover effect */
+.vendor-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.vendor-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+/* Star rating color */
+.star-filled {
+  color: var(--mzansi-yellow);
 }
