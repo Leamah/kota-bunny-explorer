@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { listDocuments } from '../../lib/appwrite';
+import { listDocuments, DATABASE_ID } from '../../lib/appwrite';
 
 interface Vendor {
   $id: string;
@@ -11,25 +11,37 @@ interface Vendor {
   rating: number;
   review_count: number;
   category: string;
-  upvotes: number;
+  upvote_count: number;
 }
-
-const DATABASE_ID = 'kota-bunny-db';
 
 export default function SpotOfTheMonth() {
   const [vendor, setVendor] = useState<Vendor | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Query vetted vendors sorted by upvote_count, updated in the last 30 days
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
     listDocuments(DATABASE_ID, 'vendors', [
       `equal("is_vetted", true)`,
-      `orderDesc("upvotes")`,
+      `greaterThanEqual("$updatedAt", "${thirtyDaysAgo.toISOString()}")`,
+      `orderDesc("upvote_count")`,
       `limit(1)`,
     ])
       .then((res: { documents: Vendor[] }) => {
         setVendor(res.documents[0] || null);
       })
-      .catch(() => setVendor(null))
+      .catch(() => {
+        // Fallback: just get the top upvoted vendor without date filter
+        listDocuments(DATABASE_ID, 'vendors', [
+          `equal("is_vetted", true)`,
+          `orderDesc("upvote_count")`,
+          `limit(1)`,
+        ])
+          .then((res: { documents: Vendor[] }) => setVendor(res.documents[0] || null))
+          .catch(() => setVendor(null));
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -78,7 +90,7 @@ export default function SpotOfTheMonth() {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
           </svg>
-          {vendor.upvotes} upvotes
+          {vendor.upvote_count} upvotes
         </div>
       </div>
     </Link>

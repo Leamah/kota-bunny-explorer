@@ -1,55 +1,19 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { listDocuments, getAccount } from '../../lib/appwrite';
-
-interface Vendor {
-  $id: string;
-  name: string;
-  address: string;
-  category: string;
-  is_vetted: boolean;
-}
-
-const ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
-const PROJECT_ID = '69cc168e00183ee74608';
-const DATABASE_ID = 'kota-bunny-db';
-const VENDORS_COLLECTION_ID = 'vendors';
+import { getAccount } from '../../lib/appwrite';
 
 export default function AdminPage() {
-  const [vendors, setVendors] = useState<Vendor[]>([]);
-  const [loading, setLoading] = useState(true);
   const [authed, setAuthed] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getAccount()
-      .then(() => {
-        setAuthed(true);
-        return loadVendors();
-      })
+      .then(() => setAuthed(true))
       .catch(() => setAuthed(false))
       .finally(() => setLoading(false));
   }, []);
-
-  async function loadVendors() {
-    const res = await listDocuments(DATABASE_ID, VENDORS_COLLECTION_ID);
-    setVendors(res.documents as Vendor[]);
-  }
-
-  async function toggleVet(vendorId: string, currentStatus: boolean) {
-    await fetch(`${ENDPOINT}/databases/${DATABASE_ID}/collections/${VENDORS_COLLECTION_ID}/documents/${vendorId}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Appwrite-Project': PROJECT_ID,
-      },
-      credentials: 'include',
-      body: JSON.stringify({ data: { is_vetted: !currentStatus } }),
-    });
-    setVendors((prev) =>
-      prev.map((v) => (v.$id === vendorId ? { ...v, is_vetted: !currentStatus } : v))
-    );
-  }
 
   if (loading) {
     return (
@@ -73,45 +37,30 @@ export default function AdminPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
       <h1 className="heading-bold text-4xl text-mzansi-black mb-2">Admin Panel</h1>
-      <p className="text-gray-500 font-sans mb-8">Vet community-submitted spots.</p>
+      <p className="text-gray-500 font-sans mb-8">Manage vendors and community submissions.</p>
       <div className="ndebele-border mb-8" />
 
-      {vendors.length === 0 ? (
-        <p className="text-gray-400 font-sans text-center py-8">No vendor submissions yet.</p>
-      ) : (
-        <div className="space-y-4">
-          {vendors.map((v) => (
-            <div
-              key={v.$id}
-              className="bg-white rounded-xl shadow-sm p-5 flex items-center justify-between"
-            >
-              <div>
-                <h3 className="font-bold text-mzansi-black">{v.name}</h3>
-                <p className="text-sm text-gray-500 font-sans">{v.address}</p>
-                <span
-                  className={`inline-block mt-1 text-xs font-bold uppercase px-2 py-0.5 rounded-full ${
-                    v.category === 'kota'
-                      ? 'bg-mzansi-yellow text-mzansi-black'
-                      : 'bg-mzansi-red text-white'
-                  }`}
-                >
-                  {v.category}
-                </span>
-              </div>
-              <button
-                onClick={() => toggleVet(v.$id, v.is_vetted)}
-                className={`px-4 py-2 rounded-lg font-semibold text-sm transition ${
-                  v.is_vetted
-                    ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                    : 'bg-red-100 text-red-700 hover:bg-red-200'
-                }`}
-              >
-                {v.is_vetted ? 'Vetted' : 'Not Vetted'}
-              </button>
-            </div>
-          ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <Link href="/admin/pending" className="block bg-white rounded-2xl shadow-md p-8 vendor-card text-center">
+          <div className="w-16 h-16 bg-mzansi-yellow rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-mzansi-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h2 className="heading-bold text-xl text-mzansi-black mb-1">Pending Submissions</h2>
+          <p className="text-gray-400 font-sans text-sm">Review and approve community-submitted spots</p>
+        </Link>
+
+        <div className="bg-white rounded-2xl shadow-md p-8 text-center opacity-60">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+          <h2 className="heading-bold text-xl text-gray-400 mb-1">Analytics</h2>
+          <p className="text-gray-300 font-sans text-sm">Coming soon</p>
         </div>
-      )}
+      </div>
     </div>
   );
 }

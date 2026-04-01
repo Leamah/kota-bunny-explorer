@@ -1,17 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { createDocument, getAccount } from '../../lib/appwrite';
-
-const DATABASE_ID = 'kota-bunny-db';
-const VENDORS_COLLECTION_ID = 'vendors';
+import { createDocument, getAccount, DATABASE_ID } from '../../lib/appwrite';
+import AuthModal from '../components/AuthModal';
 
 export default function SubmitPage() {
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const [category, setCategory] = useState('kota');
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'auth-needed' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [error, setError] = useState('');
+  const [showAuth, setShowAuth] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -21,12 +20,13 @@ export default function SubmitPage() {
     try {
       await getAccount();
     } catch {
-      setStatus('auth-needed');
+      setShowAuth(true);
+      setStatus('idle');
       return;
     }
 
     try {
-      await createDocument(DATABASE_ID, VENDORS_COLLECTION_ID, {
+      await createDocument(DATABASE_ID, 'vendors', {
         name,
         address,
         category,
@@ -59,15 +59,12 @@ export default function SubmitPage() {
         </div>
       )}
 
-      {status === 'auth-needed' && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6">
-          <p className="text-yellow-700 font-sans">
-            You need to{' '}
-            <a href="/auth" className="underline font-semibold">sign in</a>{' '}
-            before submitting a spot.
-          </p>
-        </div>
-      )}
+      <AuthModal
+        isOpen={showAuth}
+        onClose={() => setShowAuth(false)}
+        onSuccess={() => handleSubmit(new Event('submit') as unknown as React.FormEvent)}
+        actionLabel="submit a spot"
+      />
 
       {status === 'error' && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">

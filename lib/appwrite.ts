@@ -1,10 +1,19 @@
+// ============================================================
+// Appwrite REST API Client (no SDK - direct fetch)
+// Client functions: browser-side with credentials
+// Server functions: backend with API key
+// ============================================================
+
 const ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
 const PROJECT_ID = '69cc168e00183ee74608';
+const DATABASE_ID = 'kota-bunny-db';
 
 const headers = {
   'Content-Type': 'application/json',
   'X-Appwrite-Project': PROJECT_ID,
 };
+
+// --- Core fetch helpers ---
 
 async function appwriteFetch(path: string, options: RequestInit = {}) {
   const res = await fetch(`${ENDPOINT}${path}`, {
@@ -17,6 +26,12 @@ async function appwriteFetch(path: string, options: RequestInit = {}) {
   }
   return res.json();
 }
+
+function serverHeaders(apiKey: string) {
+  return { ...headers, 'X-Appwrite-Key': apiKey };
+}
+
+// --- Client: Auth ---
 
 export async function ping() {
   return appwriteFetch('/ping');
@@ -37,25 +52,49 @@ export async function createSession(email: string, password: string) {
   });
 }
 
-export async function getAccount(sessionSecret?: string) {
-  const extra: Record<string, string> = {};
-  if (sessionSecret) extra['X-Appwrite-Session'] = sessionSecret;
-  return appwriteFetch('/account', { headers: extra, credentials: 'include' });
+export async function createOAuth2Session(provider: 'google', successUrl: string, failureUrl: string) {
+  // Returns the URL to redirect the user to
+  const url = `${ENDPOINT}/account/sessions/oauth2/${provider}?project=${PROJECT_ID}&success=${encodeURIComponent(successUrl)}&failure=${encodeURIComponent(failureUrl)}`;
+  return url;
 }
 
-export async function deleteSession(sessionId = 'current', sessionSecret?: string) {
-  const extra: Record<string, string> = {};
-  if (sessionSecret) extra['X-Appwrite-Session'] = sessionSecret;
-  return appwriteFetch(`/account/sessions/${sessionId}`, {
-    method: 'DELETE',
-    headers: extra,
+export async function createPhoneSession(phone: string) {
+  return appwriteFetch('/account/sessions/phone', {
+    method: 'POST',
+    body: JSON.stringify({ userId: 'unique()', phone }),
+  });
+}
+
+export async function updatePhoneSession(userId: string, secret: string) {
+  return appwriteFetch('/account/sessions/phone', {
+    method: 'PUT',
+    body: JSON.stringify({ userId, secret }),
     credentials: 'include',
   });
 }
 
+export async function getAccount() {
+  return appwriteFetch('/account', { credentials: 'include' });
+}
+
+export async function deleteSession(sessionId = 'current') {
+  return appwriteFetch(`/account/sessions/${sessionId}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+}
+
+// --- Client: Documents ---
+
 export async function listDocuments(databaseId: string, collectionId: string, queries: string[] = []) {
   const params = queries.length ? `?queries[]=${queries.map(encodeURIComponent).join('&queries[]=')}` : '';
   return appwriteFetch(`/databases/${databaseId}/collections/${collectionId}/documents${params}`, {
+    credentials: 'include',
+  });
+}
+
+export async function getDocument(databaseId: string, collectionId: string, documentId: string) {
+  return appwriteFetch(`/databases/${databaseId}/collections/${collectionId}/documents/${documentId}`, {
     credentials: 'include',
   });
 }
@@ -67,3 +106,43 @@ export async function createDocument(databaseId: string, collectionId: string, d
     credentials: 'include',
   });
 }
+
+export async function updateDocument(databaseId: string, collectionId: string, documentId: string, data: Record<string, unknown>) {
+  return appwriteFetch(`/databases/${databaseId}/collections/${collectionId}/documents/${documentId}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ data }),
+    credentials: 'include',
+  });
+}
+
+// --- Server: Admin functions (API key required) ---
+
+export async function serverListDocuments(apiKey: string, collectionId: string, queries: string[] = []) {
+  const params = queries.length ? `?queries[]=${queries.map(encodeURIComponent).join('&queries[]=')}` : '';
+  const res = await fetch(`${ENDPOINT}/databases/${DATABASE_ID}/collections/${collectionId}/documents${params}`, {
+    headers: serverHeaders(apiKey),
+  });
+  return res.json();
+}
+
+export async function serverCreateDocument(apiKey: string, collectionId: string, data: Record<string, unknown>, documentId = 'unique()') {
+  const res = await fetch(`${ENDPOINT}/databases/${DATABASE_ID}/collections/${collectionId}/documents`, {
+    method: 'POST',
+    headers: serverHeaders(apiKey),
+    body: JSON.stringify({ documentId, data }),
+  });
+  return res.json();
+}
+
+export async function serverUpdateDocument(apiKey: string, collectionId: string, documentId: string, data: Record<string, unknown>) {
+  const res = await fetch(`${ENDPOINT}/databases/${DATABASE_ID}/collections/${collectionId}/documents/${documentId}`, {
+    method: 'PATCH',
+    headers: serverHeaders(apiKey),
+    body: JSON.stringify({ data }),
+  });
+  return res.json();
+}
+
+// --- Constants ---
+
+export { ENDPOINT, PROJECT_ID, DATABASE_ID };

@@ -1,11 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { createDocument, getAccount } from '../../lib/appwrite';
-
-const ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
-const PROJECT_ID = '69cc168e00183ee74608';
-const DATABASE_ID = 'kota-bunny-db';
+import { createDocument, getAccount, updateDocument, DATABASE_ID } from '../../lib/appwrite';
+import AuthModal from './AuthModal';
 
 interface UpvoteButtonProps {
   vendorId: string;
@@ -15,16 +12,16 @@ interface UpvoteButtonProps {
 export default function UpvoteButton({ vendorId, initialUpvotes }: UpvoteButtonProps) {
   const [upvotes, setUpvotes] = useState(initialUpvotes);
   const [voted, setVoted] = useState(false);
-  const [status, setStatus] = useState<'idle' | 'auth-needed'>('idle');
+  const [showAuth, setShowAuth] = useState(false);
 
-  async function handleUpvote() {
+  async function doUpvote() {
     if (voted) return;
 
     let user;
     try {
       user = await getAccount();
     } catch {
-      setStatus('auth-needed');
+      setShowAuth(true);
       return;
     }
 
@@ -34,17 +31,8 @@ export default function UpvoteButton({ vendorId, initialUpvotes }: UpvoteButtonP
         user_id: user.$id || user.email,
       });
 
-      // Update vendor upvote count
       const newCount = upvotes + 1;
-      await fetch(`${ENDPOINT}/databases/${DATABASE_ID}/collections/vendors/documents/${vendorId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Appwrite-Project': PROJECT_ID,
-        },
-        credentials: 'include',
-        body: JSON.stringify({ data: { upvotes: newCount } }),
-      });
+      await updateDocument(DATABASE_ID, 'vendors', vendorId, { upvote_count: newCount });
 
       setUpvotes(newCount);
       setVoted(true);
@@ -54,9 +42,9 @@ export default function UpvoteButton({ vendorId, initialUpvotes }: UpvoteButtonP
   }
 
   return (
-    <div className="flex flex-col items-center">
+    <>
       <button
-        onClick={handleUpvote}
+        onClick={doUpvote}
         disabled={voted}
         className={`flex flex-col items-center gap-1 px-6 py-3 rounded-xl font-semibold transition ${
           voted
@@ -72,11 +60,13 @@ export default function UpvoteButton({ vendorId, initialUpvotes }: UpvoteButtonP
           {voted ? 'Upvoted' : 'Upvote'}
         </span>
       </button>
-      {status === 'auth-needed' && (
-        <p className="text-yellow-600 text-xs font-sans mt-2">
-          <a href="/auth" className="underline">Sign in</a> to upvote
-        </p>
-      )}
-    </div>
+
+      <AuthModal
+        isOpen={showAuth}
+        onClose={() => setShowAuth(false)}
+        onSuccess={doUpvote}
+        actionLabel="upvote"
+      />
+    </>
   );
 }
