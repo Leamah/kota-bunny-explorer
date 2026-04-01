@@ -19,7 +19,13 @@ interface Vendor {
 const DATABASE_ID = 'kota-bunny-db';
 const VENDORS_COLLECTION_ID = 'vendors';
 
-export default function VendorList({ category }: { category: string }) {
+interface VendorListProps {
+  category: string;
+  search?: string;
+  sortBy?: 'rating' | 'upvotes';
+}
+
+export default function VendorList({ category, search = '', sortBy = 'rating' }: VendorListProps) {
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -39,6 +45,14 @@ export default function VendorList({ category }: { category: string }) {
       })
       .finally(() => setLoading(false));
   }, [category]);
+
+  const filtered = vendors
+    .filter((v) => {
+      if (!search) return true;
+      const q = search.toLowerCase();
+      return v.name.toLowerCase().includes(q) || v.address.toLowerCase().includes(q);
+    })
+    .sort((a, b) => (sortBy === 'upvotes' ? b.upvotes - a.upvotes : b.rating - a.rating));
 
   if (loading) {
     return (
@@ -64,12 +78,16 @@ export default function VendorList({ category }: { category: string }) {
     );
   }
 
-  if (vendors.length === 0) {
+  if (filtered.length === 0) {
     return (
       <div className="bg-white rounded-2xl shadow-md p-12 text-center">
-        <p className="heading-bold text-2xl text-gray-300 mb-2">No spots yet</p>
+        <p className="heading-bold text-2xl text-gray-300 mb-2">
+          {search ? 'No matches found' : 'No spots yet'}
+        </p>
         <p className="text-gray-400 font-sans text-sm">
-          Be the first to submit a {category === 'kota' ? 'Kota' : 'Bunny Chow'} spot!
+          {search
+            ? `Try a different search term.`
+            : `Be the first to submit a ${category === 'kota' ? 'Kota' : 'Bunny Chow'} spot!`}
         </p>
       </div>
     );
@@ -77,9 +95,10 @@ export default function VendorList({ category }: { category: string }) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {vendors.map((v) => (
+      {filtered.map((v) => (
         <VendorCard
           key={v.$id}
+          id={v.$id}
           name={v.name}
           address={v.address}
           rating={v.rating}

@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/recipes/generate",
+      "schedule": "0 9 * * 1"
+    }
+  ]
+}
