@@ -5,7 +5,7 @@ import SearchFilter from '../components/SearchFilter';
 export const metadata: Metadata = {
   title: 'Best Bunny Chow in South Africa | Kota & Bunny Explorer',
   description:
-    'Find the best Bunny Chow in Durban, Johannesburg and across South Africa. Bunny Chow — a hollowed-out half or quarter loaf filled with rich, spicy curry — is a Durban original that has become a national treasure. Community-rated street food guide.',
+    'Find the best Bunny Chow in Durban, Johannesburg and across South Africa. Bunny Chow, a hollowed-out half or quarter loaf filled with rich, spicy curry, is a Durban original that has become a national treasure. Community-rated street food guide.',
   keywords: [
     'Bunny Chow Durban',
     'Best Bunny Chow near me',
@@ -31,7 +31,7 @@ export default function BunnyChowPage() {
         Bunny Chow Spots
       </h1>
       <p className="text-gray-600 font-sans mb-4 max-w-2xl">
-        Bunny Chow is Durban&apos;s gift to South Africa — a hollowed-out loaf of bread filled with
+        Bunny Chow is Durban&apos;s gift to South Africa, a hollowed-out loaf of bread filled with
         rich, spicy curry. Originally from the Indian community in KwaZulu-Natal, the Bunny has
         become a cross-cultural icon loved by everyone.
       </p>
@@ -66,10 +66,10 @@ export default function BunnyChowPage() {
           </p>
           <h3 className="heading-bold text-xl text-mzansi-black mt-6">Types of Bunny Chow</h3>
           <ul className="list-disc list-inside space-y-1">
-            <li><strong>Mutton Bunny:</strong> The classic — slow-cooked mutton curry, rich and spicy</li>
+            <li><strong>Mutton Bunny:</strong> The classic, slow-cooked mutton curry, rich and spicy</li>
             <li><strong>Chicken Bunny:</strong> Tender chicken in a fragrant curry sauce</li>
-            <li><strong>Bean Bunny:</strong> Sugar beans in a thick, spiced gravy — the vegetarian favourite</li>
-            <li><strong>Chip Bunny:</strong> Filled with chips and curry sauce — a quick, budget-friendly option</li>
+            <li><strong>Bean Bunny:</strong> Sugar beans in a thick, spiced gravy, the vegetarian favourite</li>
+            <li><strong>Chip Bunny:</strong> Filled with chips and curry sauce, a quick, budget-friendly option</li>
             <li><strong>Quarter / Half / Full:</strong> Sizes based on the portion of bread loaf used</li>
           </ul>
         </div>

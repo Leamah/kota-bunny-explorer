@@ -5,7 +5,7 @@ import SearchFilter from '../components/SearchFilter';
 export const metadata: Metadata = {
   title: 'Best Kota Spots in South Africa | Kota & Bunny Explorer',
   description:
-    'Find the best Kota spots in Johannesburg, Soweto, Soshanguve, Pretoria and across Mzansi. The Kota — a hollowed-out quarter loaf filled with chips, polony, atchar, Russian sausage and more — is the ultimate South African township street food. Community-rated, street-approved.',
+    'Find the best Kota spots in Johannesburg, Soweto, Soshanguve, Pretoria and across Mzansi. The Kota, a hollowed-out quarter loaf filled with chips, polony, atchar, Russian sausage and more, is the ultimate South African township street food. Community-rated, street-approved.',
   keywords: [
     'Best Kota in Soshanguve',
     'Best Kota in Soweto',
@@ -32,7 +32,7 @@ export default function KotaPage() {
         Kota Spots
       </h1>
       <p className="text-gray-600 font-sans mb-4 max-w-2xl">
-        The Kota is the heart of township street food — a hollowed-out quarter loaf of white bread,
+        The Kota is the heart of township street food, a hollowed-out quarter loaf of white bread,
         stuffed with chips, polony, atchar, Russian sausage, cheese, and whatever your heart desires.
         Born in the townships of Gauteng, the Kota has become a Mzansi icon.
       </p>
