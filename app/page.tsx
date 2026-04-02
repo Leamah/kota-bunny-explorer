@@ -18,34 +18,44 @@ export default function HomePage() {
             </span>
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <Link
-              href="/kota"
-              className="group relative bg-mzansi-yellow text-mzansi-black w-64 h-44 rounded-2xl hover:scale-105 transition-all overflow-hidden flex flex-col items-center justify-center"
-            >
-              <div
-                className="absolute inset-0 bg-cover bg-center opacity-20 group-hover:opacity-30 transition-opacity"
-                style={{ backgroundImage: "url('https://images.unsplash.com/photo-1619454016518-697bc231e7cb?w=400&q=80')" }}
+          <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
+            {/* Kota - image behind button */}
+            <div className="relative w-72 h-56 rounded-2xl overflow-hidden shadow-2xl group">
+              <img
+                src="/kota-hero.jpg"
+                alt="Kota street food"
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
               />
-              <span className="heading-bold text-3xl md:text-4xl block relative z-10">Kota</span>
-              <span className="text-sm font-sans font-medium opacity-70 mt-1 block relative z-10">
-                Township&apos;s finest
-              </span>
-            </Link>
+              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
+              <Link
+                href="/kota"
+                className="absolute inset-0 flex flex-col items-center justify-center z-10"
+              >
+                <span className="heading-bold text-4xl md:text-5xl text-mzansi-yellow drop-shadow-lg">Kota</span>
+                <span className="text-sm font-sans font-medium text-white/80 mt-1">
+                  Township&apos;s finest
+                </span>
+              </Link>
+            </div>
 
-            <Link
-              href="/bunny-chow"
-              className="group relative bg-mzansi-red text-white w-64 h-44 rounded-2xl hover:scale-105 transition-all overflow-hidden flex flex-col items-center justify-center"
-            >
-              <div
-                className="absolute inset-0 bg-cover bg-center opacity-20 group-hover:opacity-30 transition-opacity"
-                style={{ backgroundImage: "url('https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&q=80')" }}
+            {/* Bunny Chow - image behind button */}
+            <div className="relative w-72 h-56 rounded-2xl overflow-hidden shadow-2xl group">
+              <img
+                src="/bunny-hero.jpg"
+                alt="Bunny Chow"
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
               />
-              <span className="heading-bold text-3xl md:text-4xl block relative z-10">Bunny Chow</span>
-              <span className="text-sm font-sans font-medium opacity-70 mt-1 block relative z-10">
-                Durban&apos;s pride
-              </span>
-            </Link>
+              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
+              <Link
+                href="/bunny-chow"
+                className="absolute inset-0 flex flex-col items-center justify-center z-10"
+              >
+                <span className="heading-bold text-4xl md:text-5xl text-white drop-shadow-lg">Bunny Chow</span>
+                <span className="text-sm font-sans font-medium text-white/80 mt-1">
+                  Durban&apos;s pride
+                </span>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

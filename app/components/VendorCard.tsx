@@ -3,15 +3,9 @@
 import Link from 'next/link';
 
 // Default placeholder images for spots without Google photos
-const KOTA_DEFAULTS = [
-  'https://images.unsplash.com/photo-1619454016518-697bc231e7cb?w=400&q=70',
-  'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=70',
-  'https://images.unsplash.com/photo-1550547660-d9450f859349?w=400&q=70',
-];
-const BUNNY_DEFAULTS = [
-  'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&q=70',
-  'https://images.unsplash.com/photo-1574484284002-952d92456975?w=400&q=70',
-  'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&q=70',
+const PLACEHOLDER_IMAGES = [
+  '/placeholder-1.jpg',
+  '/placeholder-2.jpg',
 ];
 
 interface VendorCardProps {
@@ -55,9 +49,8 @@ export default function VendorCard({
   category = 'kota',
 }: VendorCardProps) {
   const photoList: string[] = photos ? (() => { try { return JSON.parse(photos); } catch { return []; } })() : [];
-  const defaults = category === 'bunny-chow' ? BUNNY_DEFAULTS : KOTA_DEFAULTS;
   // Use real photo or pick a consistent default based on the name
-  const thumbnail = photoList[0] || defaults[name.length % defaults.length];
+  const thumbnail = photoList[0] || PLACEHOLDER_IMAGES[name.length % PLACEHOLDER_IMAGES.length];
 
   return (
     <Link href={`/vendor/${id}`} className="block">

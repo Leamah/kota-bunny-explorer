@@ -26,6 +26,28 @@ const SEARCH_QUERIES = [
   'Bunny Chow Pietermaritzburg',
 ];
 
+// Blocklist: Google Place IDs for non-food places that matched our queries
+const BLOCKED_PLACE_IDS = new Set([
+  'ChIJHbey9tYJlR4R6f85miEssiM', // SOWETO TOWERS
+  'ChIJ46Fx206nlR4RyE6JsVNiNOg', // Hector Pieterson Memorial
+  'ChIJtw3EHtGmlR4RNmGYqk8QMUQ', // Credo Mutwa Cultural Village
+]);
+
+// Auto-reject: names containing these keywords are not food spots
+const REJECT_KEYWORDS = [
+  'memorial', 'museum', 'library', 'church', 'school', 'college',
+  'university', 'hospital', 'clinic', 'police', 'court', 'mall',
+  'shopping centre', 'shopping center', 'petrol', 'garage', 'hotel',
+  'guest house', 'lodge', 'resort', 'park', 'garden', 'village',
+  'tower', 'stadium', 'gym', 'fitness',
+];
+
+function isBlockedPlace(placeId: string, placeName: string): boolean {
+  if (BLOCKED_PLACE_IDS.has(placeId)) return true;
+  const lower = placeName.toLowerCase();
+  return REJECT_KEYWORDS.some((kw) => lower.includes(kw));
+}
+
 // Only request the fields we actually store - keeps costs low
 const FIELD_MASK = [
   'places.id',
@@ -101,6 +123,12 @@ export async function POST(request: Request) {
       const places = data.places || [];
 
       for (const place of places) {
+        // Auto-reject non-food places
+        if (isBlockedPlace(place.id, place.displayName.text)) {
+          filtered++;
+          continue;
+        }
+
         // Double-Gate Filter: 4+ stars AND 10+ reviews
         if (!place.rating || place.rating < 4.0 || !place.userRatingCount || place.userRatingCount < 10) {
           filtered++;
