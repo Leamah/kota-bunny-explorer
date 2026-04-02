@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { listDocuments, updateDocument, getAccount, Query, DATABASE_ID } from '../../../lib/appwrite';
+import { listDocuments, updateDocument, Query, DATABASE_ID } from '../../../lib/appwrite';
 
 interface Vendor {
   $id: string;
@@ -14,17 +14,11 @@ interface Vendor {
 export default function ManageImagesPage() {
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(true);
-  const [authed, setAuthed] = useState(false);
   const [filter, setFilter] = useState<'all' | 'kota' | 'bunny-chow'>('all');
   const [saving, setSaving] = useState<string | null>(null);
 
   useEffect(() => {
-    getAccount()
-      .then(() => {
-        setAuthed(true);
-        loadVendors();
-      })
-      .catch(() => setLoading(false));
+    loadVendors();
   }, []);
 
   async function loadVendors() {
@@ -96,17 +90,6 @@ export default function ManageImagesPage() {
       // ignore
     }
     setSaving(null);
-  }
-
-  if (!authed && !loading) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-12 text-center">
-        <h1 className="heading-bold text-3xl text-mzansi-black mb-4">Manage Images</h1>
-        <p className="text-gray-500 font-sans">
-          Please <a href="/auth" className="text-mzansi-teal underline font-semibold">sign in</a> to manage images.
-        </p>
-      </div>
-    );
   }
 
   const displayed = filter === 'all' ? vendors : vendors.filter((v) => v.category === filter);

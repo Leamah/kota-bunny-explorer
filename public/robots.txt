@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /mzansi-ctrl-9x/
+
+Sitemap: https://www.kotabunny.co.za/sitemap.xml

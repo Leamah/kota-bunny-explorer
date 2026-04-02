@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { listDocuments, updateDocument, getAccount, Query, DATABASE_ID } from '../../../lib/appwrite';
+import { listDocuments, updateDocument, Query, DATABASE_ID } from '../../../lib/appwrite';
 
 interface Vendor {
   $id: string;
@@ -16,24 +16,22 @@ interface Vendor {
 export default function PendingPage() {
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(true);
-  const [authed, setAuthed] = useState(false);
 
   useEffect(() => {
-    getAccount()
-      .then(() => {
-        setAuthed(true);
-        return loadPending();
-      })
-      .catch(() => setAuthed(false))
-      .finally(() => setLoading(false));
+    loadPending();
   }, []);
 
   async function loadPending() {
-    const res = await listDocuments(DATABASE_ID, 'vendors', [
-      Query.equal('is_vetted', false),
-      Query.equal('source', 'community'),
-    ]);
-    setVendors(res.documents as Vendor[]);
+    try {
+      const res = await listDocuments(DATABASE_ID, 'vendors', [
+        Query.equal('is_vetted', false),
+        Query.equal('source', 'community'),
+      ]);
+      setVendors(res.documents as Vendor[]);
+    } catch {
+      // ignore
+    }
+    setLoading(false);
   }
 
   async function approve(vendorId: string) {
@@ -42,8 +40,6 @@ export default function PendingPage() {
   }
 
   async function reject(vendorId: string) {
-    // For now, just mark as vetted=false and remove from list
-    // Could add a "rejected" status in future
     setVendors((prev) => prev.filter((v) => v.$id !== vendorId));
   }
 
@@ -55,21 +51,10 @@ export default function PendingPage() {
     );
   }
 
-  if (!authed) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-12 text-center">
-        <h1 className="heading-bold text-3xl text-mzansi-black mb-4">Admin Panel</h1>
-        <p className="text-gray-500 font-sans">
-          Please <a href="/auth" className="text-mzansi-teal underline font-semibold">sign in</a> to access.
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
       <div className="flex items-center gap-3 mb-2">
-        <a href="/admin" className="text-mzansi-teal hover:text-teal-700 font-sans text-sm">&larr; Admin</a>
+        <a href="/mzansi-ctrl-9x" className="text-mzansi-teal hover:text-teal-700 font-sans text-sm">&larr; Admin</a>
       </div>
       <h1 className="heading-bold text-4xl text-mzansi-black mb-2">Pending Submissions</h1>
       <p className="text-gray-500 font-sans mb-8">
