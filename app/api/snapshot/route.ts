@@ -106,6 +106,10 @@ export async function POST(request: Request) {
   let created = 0;
   let updated = 0;
   let filtered = 0;
+  let hidden = 0;
+
+  // Track which google_ids we saw this sync (for demotion check)
+  const seenGoogleIds = new Set<string>();
 
   for (const query of SEARCH_QUERIES) {
     try {
@@ -129,8 +133,22 @@ export async function POST(request: Request) {
           continue;
         }
 
+        // Track all Google IDs we encounter (even filtered ones for demotion)
+        seenGoogleIds.add(place.id);
+
         // Double-Gate Filter: 4+ stars AND 10+ reviews
         if (!place.rating || place.rating < 4.0 || !place.userRatingCount || place.userRatingCount < 10) {
+          // Check if this place was previously in our DB - if so, hide it
+          const existing = await serverListDocuments(APPWRITE_API_KEY, 'vendors', [
+            Query.equal('google_id', place.id),
+          ]);
+          if (existing.documents && existing.documents.length > 0 && existing.documents[0].is_vetted) {
+            await serverUpdateDocument(APPWRITE_API_KEY, 'vendors', existing.documents[0].$id, {
+              is_vetted: false,
+              last_synced: new Date().toISOString(),
+            });
+            hidden++;
+          }
           filtered++;
           continue;
         }
@@ -145,37 +163,56 @@ export async function POST(request: Request) {
         // Opening hours as JSON string
         const hours = place.currentOpeningHours?.weekdayDescriptions || [];
 
-        const vendorData = {
-          name: place.displayName.text,
-          address: place.formattedAddress,
-          category,
-          source: 'google',
-          google_id: place.id,
-          rating: place.rating,
-          review_count: place.userRatingCount,
-          is_vetted: true,
-          upvote_count: 0,
-          phone: place.nationalPhoneNumber || '',
-          hours: JSON.stringify(hours),
-          photos: JSON.stringify(photos),
-          latitude: place.location?.latitude || 0,
-          longitude: place.location?.longitude || 0,
-          last_synced: new Date().toISOString(),
-        };
-
         // Check if google_id already exists (upsert)
         const existing = await serverListDocuments(APPWRITE_API_KEY, 'vendors', [
           Query.equal('google_id', place.id),
         ]);
 
         if (existing.documents && existing.documents.length > 0) {
-          // Update: refresh rating, review count, photos, hours, phone
-          const { source, google_id, upvote_count, ...updateData } = vendorData;
-          void source; void google_id; void upvote_count;
-          await serverUpdateDocument(APPWRITE_API_KEY, 'vendors', existing.documents[0].$id, updateData);
+          const doc = existing.documents[0];
+
+          // Build update data - always refresh these fields
+          const updateData: Record<string, unknown> = {
+            name: place.displayName.text,
+            address: place.formattedAddress,
+            category,
+            rating: place.rating,
+            review_count: place.userRatingCount,
+            is_vetted: true,
+            phone: place.nationalPhoneNumber || '',
+            hours: JSON.stringify(hours),
+            latitude: place.location?.latitude || 0,
+            longitude: place.location?.longitude || 0,
+            last_synced: new Date().toISOString(),
+          };
+
+          // Only update photos if images_locked is NOT true
+          if (!doc.images_locked) {
+            updateData.photos = JSON.stringify(photos);
+          }
+
+          await serverUpdateDocument(APPWRITE_API_KEY, 'vendors', doc.$id, updateData);
           updated++;
         } else {
-          await serverCreateDocument(APPWRITE_API_KEY, 'vendors', vendorData);
+          // Create new vendor
+          await serverCreateDocument(APPWRITE_API_KEY, 'vendors', {
+            name: place.displayName.text,
+            address: place.formattedAddress,
+            category,
+            source: 'google',
+            google_id: place.id,
+            rating: place.rating,
+            review_count: place.userRatingCount,
+            is_vetted: true,
+            upvote_count: 0,
+            phone: place.nationalPhoneNumber || '',
+            hours: JSON.stringify(hours),
+            photos: JSON.stringify(photos),
+            latitude: place.location?.latitude || 0,
+            longitude: place.location?.longitude || 0,
+            images_locked: false,
+            last_synced: new Date().toISOString(),
+          });
           created++;
         }
       }
@@ -186,7 +223,7 @@ export async function POST(request: Request) {
 
   return NextResponse.json({
     success: true,
-    summary: { created, updated, filtered },
+    summary: { created, updated, filtered, hidden },
     timestamp: new Date().toISOString(),
   });
 }

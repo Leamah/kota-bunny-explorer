@@ -51,15 +51,15 @@ export default function AdminPage() {
           <p className="text-gray-400 font-sans text-sm">Review and approve community-submitted spots</p>
         </Link>
 
-        <div className="bg-white rounded-2xl shadow-md p-8 text-center opacity-60">
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        <Link href="/admin/images" className="block bg-white rounded-2xl shadow-md p-8 vendor-card text-center">
+          <div className="w-16 h-16 bg-mzansi-teal rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
           </div>
-          <h2 className="heading-bold text-xl text-gray-400 mb-1">Analytics</h2>
-          <p className="text-gray-300 font-sans text-sm">Coming soon</p>
-        </div>
+          <h2 className="heading-bold text-xl text-mzansi-black mb-1">Manage Images</h2>
+          <p className="text-gray-400 font-sans text-sm">Review, remove, and lock vendor photos</p>
+        </Link>
       </div>
     </div>
   );
