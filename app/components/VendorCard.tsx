@@ -18,6 +18,7 @@ interface VendorCardProps {
   upvotes?: number;
   photos?: string;
   category?: string;
+  priceRange?: string;
 }
 
 function Stars({ rating }: { rating: number }) {
@@ -47,6 +48,7 @@ export default function VendorCard({
   upvotes = 0,
   photos,
   category = 'kota',
+  priceRange,
 }: VendorCardProps) {
   const photoList: string[] = photos ? (() => { try { return JSON.parse(photos); } catch { return []; } })() : [];
   // Use real photo or pick a consistent default based on the name
@@ -83,6 +85,11 @@ export default function VendorCard({
             <span className="text-sm font-sans text-gray-600">
               {rating.toFixed(1)} ({reviewCount})
             </span>
+            {priceRange && (
+              <span className="text-sm font-bold text-mzansi-teal font-sans ml-auto">
+                {priceRange}
+              </span>
+            )}
           </div>
 
           <div className="flex items-center justify-between pt-3 border-t border-gray-100">

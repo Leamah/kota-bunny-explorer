@@ -59,7 +59,20 @@ const FIELD_MASK = [
   'places.nationalPhoneNumber',
   'places.currentOpeningHours',
   'places.photos',
+  'places.priceLevel',
 ].join(',');
+
+// Google price levels to display strings
+function mapPriceLevel(level?: string): string {
+  switch (level) {
+    case 'PRICE_LEVEL_FREE': return 'Free';
+    case 'PRICE_LEVEL_INEXPENSIVE': return 'R';
+    case 'PRICE_LEVEL_MODERATE': return 'RR';
+    case 'PRICE_LEVEL_EXPENSIVE': return 'RRR';
+    case 'PRICE_LEVEL_VERY_EXPENSIVE': return 'RRRR';
+    default: return '';
+  }
+}
 
 interface GooglePhoto {
   name: string;
@@ -75,6 +88,7 @@ interface GooglePlace {
   location: { latitude: number; longitude: number };
   formattedAddress: string;
   nationalPhoneNumber?: string;
+  priceLevel?: string;
   currentOpeningHours?: {
     weekdayDescriptions?: string[];
   };
@@ -181,6 +195,7 @@ export async function POST(request: Request) {
             is_vetted: true,
             phone: place.nationalPhoneNumber || '',
             hours: JSON.stringify(hours),
+            price_range: mapPriceLevel(place.priceLevel),
             latitude: place.location?.latitude || 0,
             longitude: place.location?.longitude || 0,
             last_synced: new Date().toISOString(),
@@ -208,6 +223,7 @@ export async function POST(request: Request) {
             phone: place.nationalPhoneNumber || '',
             hours: JSON.stringify(hours),
             photos: JSON.stringify(photos),
+            price_range: mapPriceLevel(place.priceLevel),
             latitude: place.location?.latitude || 0,
             longitude: place.location?.longitude || 0,
             images_locked: false,

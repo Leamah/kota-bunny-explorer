@@ -15,6 +15,7 @@ interface Vendor {
   is_vetted: boolean;
   upvote_count: number;
   photos: string;
+  price_range: string;
 }
 
 const VENDORS_COLLECTION_ID = 'vendors';
@@ -118,6 +119,7 @@ export default function VendorList({ category, search = '', sortBy = 'rating' }:
           upvotes={v.upvote_count}
           photos={v.photos}
           category={v.category}
+          priceRange={v.price_range}
         />
       ))}
     </div>
