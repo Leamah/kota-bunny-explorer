@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { listDocuments, DATABASE_ID } from '../../lib/appwrite';
+import { listDocuments, Query, DATABASE_ID } from '../../lib/appwrite';
 
 interface Vendor {
   $id: string;
@@ -24,10 +24,10 @@ export default function SpotOfTheMonth() {
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     listDocuments(DATABASE_ID, 'vendors', [
-      `equal("is_vetted", true)`,
-      `greaterThanEqual("$updatedAt", "${thirtyDaysAgo.toISOString()}")`,
-      `orderDesc("upvote_count")`,
-      `limit(1)`,
+      Query.equal('is_vetted', true),
+      Query.greaterThanEqual('$updatedAt', thirtyDaysAgo.toISOString()),
+      Query.orderDesc('upvote_count'),
+      Query.limit(1),
     ])
       .then((res: { documents: Vendor[] }) => {
         setVendor(res.documents[0] || null);
@@ -35,9 +35,9 @@ export default function SpotOfTheMonth() {
       .catch(() => {
         // Fallback: just get the top upvoted vendor without date filter
         listDocuments(DATABASE_ID, 'vendors', [
-          `equal("is_vetted", true)`,
-          `orderDesc("upvote_count")`,
-          `limit(1)`,
+          Query.equal('is_vetted', true),
+          Query.orderDesc('upvote_count'),
+          Query.limit(1),
         ])
           .then((res: { documents: Vendor[] }) => setVendor(res.documents[0] || null))
           .catch(() => setVendor(null));

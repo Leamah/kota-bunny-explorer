@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import VendorCard from './VendorCard';
-import { listDocuments } from '../../lib/appwrite';
+import { listDocuments, Query, DATABASE_ID } from '../../lib/appwrite';
 
 interface Vendor {
   $id: string;
@@ -13,10 +13,9 @@ interface Vendor {
   category: string;
   source: 'google' | 'community';
   is_vetted: boolean;
-  upvotes: number;
+  upvote_count: number;
 }
 
-const DATABASE_ID = 'kota-bunny-db';
 const VENDORS_COLLECTION_ID = 'vendors';
 
 interface VendorListProps {
@@ -32,10 +31,10 @@ export default function VendorList({ category, search = '', sortBy = 'rating' }:
 
   useEffect(() => {
     listDocuments(DATABASE_ID, VENDORS_COLLECTION_ID, [
-      `equal("category", "${category}")`,
-      `equal("is_vetted", true)`,
-      `greaterThanEqual("rating", 4.0)`,
-      `greaterThanEqual("review_count", 10)`,
+      Query.equal('category', category),
+      Query.equal('is_vetted', true),
+      Query.greaterThanEqual('rating', 4.0),
+      Query.greaterThanEqual('review_count', 10),
     ])
       .then((res: { documents: Vendor[] }) => {
         setVendors(res.documents);
@@ -52,7 +51,7 @@ export default function VendorList({ category, search = '', sortBy = 'rating' }:
       const q = search.toLowerCase();
       return v.name.toLowerCase().includes(q) || v.address.toLowerCase().includes(q);
     })
-    .sort((a, b) => (sortBy === 'upvotes' ? b.upvotes - a.upvotes : b.rating - a.rating));
+    .sort((a, b) => (sortBy === 'upvotes' ? b.upvote_count - a.upvote_count : b.rating - a.rating));
 
   if (loading) {
     return (
@@ -104,7 +103,7 @@ export default function VendorList({ category, search = '', sortBy = 'rating' }:
           rating={v.rating}
           reviewCount={v.review_count}
           source={v.source}
-          upvotes={v.upvotes}
+          upvotes={v.upvote_count}
         />
       ))}
     </div>

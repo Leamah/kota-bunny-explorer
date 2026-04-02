@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { listDocuments, updateDocument, getAccount, DATABASE_ID } from '../../../lib/appwrite';
+import { listDocuments, updateDocument, getAccount, Query, DATABASE_ID } from '../../../lib/appwrite';
 
 interface Vendor {
   $id: string;
@@ -30,8 +30,8 @@ export default function PendingPage() {
 
   async function loadPending() {
     const res = await listDocuments(DATABASE_ID, 'vendors', [
-      `equal("is_vetted", false)`,
-      `equal("source", "community")`,
+      Query.equal('is_vetted', false),
+      Query.equal('source', 'community'),
     ]);
     setVendors(res.documents as Vendor[]);
   }

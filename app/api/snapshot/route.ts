@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { serverListDocuments, serverCreateDocument, serverUpdateDocument } from '../../../lib/appwrite';
+import { serverListDocuments, serverCreateDocument, serverUpdateDocument, Query } from '../../../lib/appwrite';
 
 const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY || '';
 const APPWRITE_API_KEY = process.env.APPWRITE_API_KEY || '';
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
 
         // Check if google_id already exists (upsert logic)
         const existing = await serverListDocuments(APPWRITE_API_KEY, 'vendors', [
-          `equal("google_id", "${place.id}")`,
+          Query.equal('google_id', place.id),
         ]);
 
         if (existing.documents && existing.documents.length > 0) {

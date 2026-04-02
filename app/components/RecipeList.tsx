@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { listDocuments } from '../../lib/appwrite';
+import { listDocuments, DATABASE_ID } from '../../lib/appwrite';
 
 interface Recipe {
   $id: string;
@@ -10,8 +10,6 @@ interface Recipe {
   image_url: string;
   generated_at: string;
 }
-
-const DATABASE_ID = 'kota-bunny-db';
 const RECIPES_COLLECTION_ID = 'recipes';
 
 export default function RecipeList() {

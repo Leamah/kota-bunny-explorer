@@ -86,11 +86,11 @@ export async function deleteSession(sessionId = 'current') {
 
 // --- Client: Documents ---
 
-export async function listDocuments(databaseId: string, collectionId: string, queries: string[] = []) {
-  const params = queries.length ? `?queries[]=${queries.map(encodeURIComponent).join('&queries[]=')}` : '';
-  return appwriteFetch(`/databases/${databaseId}/collections/${collectionId}/documents${params}`, {
-    credentials: 'include',
-  });
+export async function listDocuments(databaseId: string, collectionId: string, queries: Record<string, unknown>[] = []) {
+  const params = queries.length
+    ? '?' + queries.map((q) => `queries[]=${encodeURIComponent(JSON.stringify(q))}`).join('&')
+    : '';
+  return appwriteFetch(`/databases/${databaseId}/collections/${collectionId}/documents${params}`);
 }
 
 export async function getDocument(databaseId: string, collectionId: string, documentId: string) {
@@ -117,8 +117,10 @@ export async function updateDocument(databaseId: string, collectionId: string, d
 
 // --- Server: Admin functions (API key required) ---
 
-export async function serverListDocuments(apiKey: string, collectionId: string, queries: string[] = []) {
-  const params = queries.length ? `?queries[]=${queries.map(encodeURIComponent).join('&queries[]=')}` : '';
+export async function serverListDocuments(apiKey: string, collectionId: string, queries: Record<string, unknown>[] = []) {
+  const params = queries.length
+    ? '?' + queries.map((q) => `queries[]=${encodeURIComponent(JSON.stringify(q))}`).join('&')
+    : '';
   const res = await fetch(`${ENDPOINT}/databases/${DATABASE_ID}/collections/${collectionId}/documents${params}`, {
     headers: serverHeaders(apiKey),
   });
@@ -142,6 +144,16 @@ export async function serverUpdateDocument(apiKey: string, collectionId: string,
   });
   return res.json();
 }
+
+// --- Query helpers (Appwrite REST API needs JSON objects) ---
+
+export const Query = {
+  equal: (attribute: string, value: unknown) => ({ method: 'equal', attribute, values: Array.isArray(value) ? value : [value] }),
+  greaterThanEqual: (attribute: string, value: unknown) => ({ method: 'greaterThanEqual', attribute, values: [value] }),
+  orderDesc: (attribute: string) => ({ method: 'orderDesc', attribute }),
+  orderAsc: (attribute: string) => ({ method: 'orderAsc', attribute }),
+  limit: (value: number) => ({ method: 'limit', values: [value] }),
+};
 
 // --- Constants ---
 

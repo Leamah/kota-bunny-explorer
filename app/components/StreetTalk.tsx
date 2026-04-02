@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { listDocuments, createDocument, getAccount, DATABASE_ID } from '../../lib/appwrite';
+import { listDocuments, createDocument, getAccount, Query, DATABASE_ID } from '../../lib/appwrite';
 import AuthModal from './AuthModal';
 
 interface Review {
@@ -25,7 +25,7 @@ export default function StreetTalk({ vendorId }: { vendorId: string }) {
 
   useEffect(() => {
     listDocuments(DATABASE_ID, REVIEWS_COLLECTION_ID, [
-      `equal("vendor_id", "${vendorId}")`,
+      Query.equal('vendor_id', vendorId),
     ])
       .then((res: { documents: Review[] }) => setReviews(res.documents))
       .catch(() => setReviews([]))
