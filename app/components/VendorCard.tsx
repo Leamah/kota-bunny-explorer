@@ -2,6 +2,18 @@
 
 import Link from 'next/link';
 
+// Default placeholder images for spots without Google photos
+const KOTA_DEFAULTS = [
+  'https://images.unsplash.com/photo-1619454016518-697bc231e7cb?w=400&q=70',
+  'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=70',
+  'https://images.unsplash.com/photo-1550547660-d9450f859349?w=400&q=70',
+];
+const BUNNY_DEFAULTS = [
+  'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&q=70',
+  'https://images.unsplash.com/photo-1574484284002-952d92456975?w=400&q=70',
+  'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&q=70',
+];
+
 interface VendorCardProps {
   id: string;
   name: string;
@@ -11,6 +23,7 @@ interface VendorCardProps {
   source: 'google' | 'community';
   upvotes?: number;
   photos?: string;
+  category?: string;
 }
 
 function Stars({ rating }: { rating: number }) {
@@ -39,27 +52,22 @@ export default function VendorCard({
   source,
   upvotes = 0,
   photos,
+  category = 'kota',
 }: VendorCardProps) {
   const photoList: string[] = photos ? (() => { try { return JSON.parse(photos); } catch { return []; } })() : [];
-  const thumbnail = photoList[0] || null;
+  const defaults = category === 'bunny-chow' ? BUNNY_DEFAULTS : KOTA_DEFAULTS;
+  // Use real photo or pick a consistent default based on the name
+  const thumbnail = photoList[0] || defaults[name.length % defaults.length];
 
   return (
     <Link href={`/vendor/${id}`} className="block">
       <div className="bg-white rounded-2xl shadow-md overflow-hidden vendor-card h-full">
-        {thumbnail ? (
-          <img
-            src={thumbnail}
-            alt={name}
-            className="w-full h-48 object-cover"
-            loading="lazy"
-          />
-        ) : (
-          <div className="w-full h-48 bg-gradient-to-br from-mzansi-yellow to-mzansi-red flex items-center justify-center">
-            <span className="text-white heading-bold text-3xl opacity-60">
-              {name.charAt(0)}
-            </span>
-          </div>
-        )}
+        <img
+          src={thumbnail}
+          alt={name}
+          className="w-full h-48 object-cover"
+          loading="lazy"
+        />
 
         <div className="p-5">
           <div className="flex items-start justify-between mb-2">

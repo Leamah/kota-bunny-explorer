@@ -37,8 +37,7 @@ export default function KotaPage() {
         Born in the townships of Gauteng, the Kota has become a Mzansi icon.
       </p>
       <p className="text-gray-500 font-sans text-sm mb-8 max-w-2xl">
-        All spots are community-rated. We only show places with <strong>4+ stars</strong> and{' '}
-        <strong>10+ reviews</strong> so you know it&apos;s legit.
+        All spots are community-rated. You get access to only the top rated places.
       </p>
       <div className="ndebele-border mb-8" />
 

@@ -12,26 +12,37 @@ export default function HomePage() {
             What&apos;s Your Bite Today?
           </h1>
           <p className="text-lg md:text-xl text-gray-300 mb-12 max-w-2xl mx-auto font-sans">
-            Find the best street food spots across Mzansi. Community-rated, street-approved.
+            Find the best street food spots across Southy that have{' '}
+            <span className="heading-bold text-mzansi-yellow text-2xl md:text-3xl inline-block transform -rotate-2">
+              Community Cred
+            </span>
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <Link
               href="/kota"
-              className="group relative bg-mzansi-yellow text-mzansi-black w-64 py-6 rounded-2xl hover:bg-yellow-300 transition-all hover:scale-105 text-center"
+              className="group relative bg-mzansi-yellow text-mzansi-black w-64 h-44 rounded-2xl hover:scale-105 transition-all overflow-hidden flex flex-col items-center justify-center"
             >
-              <span className="heading-bold text-3xl md:text-4xl block">Kota</span>
-              <span className="text-sm font-sans font-medium opacity-70 mt-1 block">
+              <div
+                className="absolute inset-0 bg-cover bg-center opacity-20 group-hover:opacity-30 transition-opacity"
+                style={{ backgroundImage: "url('https://images.unsplash.com/photo-1619454016518-697bc231e7cb?w=400&q=80')" }}
+              />
+              <span className="heading-bold text-3xl md:text-4xl block relative z-10">Kota</span>
+              <span className="text-sm font-sans font-medium opacity-70 mt-1 block relative z-10">
                 Township&apos;s finest
               </span>
             </Link>
 
             <Link
               href="/bunny-chow"
-              className="group relative bg-mzansi-red text-white w-64 py-6 rounded-2xl hover:bg-red-700 transition-all hover:scale-105 text-center"
+              className="group relative bg-mzansi-red text-white w-64 h-44 rounded-2xl hover:scale-105 transition-all overflow-hidden flex flex-col items-center justify-center"
             >
-              <span className="heading-bold text-3xl md:text-4xl block">Bunny Chow</span>
-              <span className="text-sm font-sans font-medium opacity-70 mt-1 block">
+              <div
+                className="absolute inset-0 bg-cover bg-center opacity-20 group-hover:opacity-30 transition-opacity"
+                style={{ backgroundImage: "url('https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&q=80')" }}
+              />
+              <span className="heading-bold text-3xl md:text-4xl block relative z-10">Bunny Chow</span>
+              <span className="text-sm font-sans font-medium opacity-70 mt-1 block relative z-10">
                 Durban&apos;s pride
               </span>
             </Link>
@@ -55,8 +66,7 @@ export default function HomePage() {
             Weekly Recipe Drop
           </h2>
           <p className="text-teal-100 font-sans mb-8 max-w-xl mx-auto">
-            Every week we drop a new Kota or Bunny Chow recipe. Easy subs, no fancy stuff.
-            &quot;No polony? Use ham.&quot;
+            Every week we drop a new Kota or Bunny Chow recipe. Easy subs, easy vibes.
           </p>
           <Link
             href="/recipes"
@@ -73,7 +83,7 @@ export default function HomePage() {
           Know a Spot?
         </h2>
         <p className="text-gray-600 font-sans mb-8 max-w-lg mx-auto">
-          Share your favourite hidden gem with the community. Help fellow South Africans find the best street food.
+          Know a hidden gem? Share it with the community.
         </p>
         <Link
           href="/submit"

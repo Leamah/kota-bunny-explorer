@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { serverListDocuments, serverCreateDocument, serverUpdateDocument, Query } from '../../../lib/appwrite';
 
 const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY || '';
+const GOOGLE_BROWSER_KEY = process.env.GOOGLE_PLACES_BROWSER_KEY || GOOGLE_API_KEY;
 const APPWRITE_API_KEY = process.env.APPWRITE_API_KEY || '';
 const CRON_SECRET = process.env.CRON_SECRET || '';
 
@@ -11,10 +12,18 @@ const SEARCH_QUERIES = [
   'Kota spot Soshanguve',
   'Kota spot Pretoria',
   'Kota street food Gauteng',
+  'Sphatlo spot Pretoria',
+  'Spatlo food Soshanguve',
+  'Sphatlo Mamelodi',
+  'Kota spot Tembisa',
+  'Kota spot Alexandra Johannesburg',
+  'Kota spot Vosloorus',
+  'Kota spot Katlehong',
   'Bunny Chow Durban',
   'Bunny Chow Johannesburg',
   'Bunny Chow Cape Town',
   'Bunny Chow restaurant KwaZulu-Natal',
+  'Bunny Chow Pietermaritzburg',
 ];
 
 // Only request the fields we actually store - keeps costs low
@@ -55,7 +64,8 @@ interface GooglePlacesResponse {
 }
 
 function buildPhotoUrl(photoName: string, maxWidth = 800): string {
-  return `https://places.googleapis.com/v1/${photoName}/media?maxWidthPx=${maxWidth}&key=${GOOGLE_API_KEY}`;
+  // Use browser key in photo URLs since these are loaded client-side
+  return `https://places.googleapis.com/v1/${photoName}/media?maxWidthPx=${maxWidth}&key=${GOOGLE_BROWSER_KEY}`;
 }
 
 export async function POST(request: Request) {

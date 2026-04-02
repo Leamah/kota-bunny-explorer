@@ -46,13 +46,24 @@ export default function VendorList({ category, search = '', sortBy = 'rating' }:
       .finally(() => setLoading(false));
   }, [category]);
 
+  const hasPhotos = (v: Vendor) => {
+    if (!v.photos) return false;
+    try { const p = JSON.parse(v.photos); return Array.isArray(p) && p.length > 0; } catch { return false; }
+  };
+
   const filtered = vendors
     .filter((v) => {
       if (!search) return true;
       const q = search.toLowerCase();
       return v.name.toLowerCase().includes(q) || v.address.toLowerCase().includes(q);
     })
-    .sort((a, b) => (sortBy === 'upvotes' ? b.upvote_count - a.upvote_count : b.rating - a.rating));
+    .sort((a, b) => {
+      // Places with photos first
+      const aHas = hasPhotos(a) ? 1 : 0;
+      const bHas = hasPhotos(b) ? 1 : 0;
+      if (bHas !== aHas) return bHas - aHas;
+      return sortBy === 'upvotes' ? b.upvote_count - a.upvote_count : b.rating - a.rating;
+    });
 
   if (loading) {
     return (
@@ -106,6 +117,7 @@ export default function VendorList({ category, search = '', sortBy = 'rating' }:
           source={v.source}
           upvotes={v.upvote_count}
           photos={v.photos}
+          category={v.category}
         />
       ))}
     </div>
