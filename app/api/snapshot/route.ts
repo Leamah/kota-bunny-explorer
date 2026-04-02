@@ -5,7 +5,6 @@ const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY || '';
 const APPWRITE_API_KEY = process.env.APPWRITE_API_KEY || '';
 const CRON_SECRET = process.env.CRON_SECRET || '';
 
-// Search queries for South African street food spots
 const SEARCH_QUERIES = [
   'Kota spot Johannesburg',
   'Kota spot Soweto',
@@ -18,6 +17,25 @@ const SEARCH_QUERIES = [
   'Bunny Chow restaurant KwaZulu-Natal',
 ];
 
+// Only request the fields we actually store - keeps costs low
+const FIELD_MASK = [
+  'places.id',
+  'places.displayName',
+  'places.formattedAddress',
+  'places.rating',
+  'places.userRatingCount',
+  'places.location',
+  'places.nationalPhoneNumber',
+  'places.currentOpeningHours',
+  'places.photos',
+].join(',');
+
+interface GooglePhoto {
+  name: string;
+  widthPx: number;
+  heightPx: number;
+}
+
 interface GooglePlace {
   id: string;
   displayName: { text: string };
@@ -25,14 +43,22 @@ interface GooglePlace {
   userRatingCount: number;
   location: { latitude: number; longitude: number };
   formattedAddress: string;
+  nationalPhoneNumber?: string;
+  currentOpeningHours?: {
+    weekdayDescriptions?: string[];
+  };
+  photos?: GooglePhoto[];
 }
 
 interface GooglePlacesResponse {
   places?: GooglePlace[];
 }
 
+function buildPhotoUrl(photoName: string, maxWidth = 800): string {
+  return `https://places.googleapis.com/v1/${photoName}/media?maxWidthPx=${maxWidth}&key=${GOOGLE_API_KEY}`;
+}
+
 export async function POST(request: Request) {
-  // Auth check
   const authHeader = request.headers.get('authorization');
   if (CRON_SECRET && authHeader !== `Bearer ${CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -51,13 +77,12 @@ export async function POST(request: Request) {
 
   for (const query of SEARCH_QUERIES) {
     try {
-      // Google Places Text Search (New) with field masking for cost savings
       const res = await fetch('https://places.googleapis.com/v1/places:searchText', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-Goog-Api-Key': GOOGLE_API_KEY,
-          'X-Goog-FieldMask': 'places.id,places.displayName,places.rating,places.userRatingCount,places.location,places.formattedAddress',
+          'X-Goog-FieldMask': FIELD_MASK,
         },
         body: JSON.stringify({ textQuery: query }),
       });
@@ -72,36 +97,47 @@ export async function POST(request: Request) {
           continue;
         }
 
-        // Determine category from the search query
         const category = query.toLowerCase().includes('bunny') ? 'bunny-chow' : 'kota';
 
-        // Check if google_id already exists (upsert logic)
+        // Build photo URLs (max 5)
+        const photos = (place.photos || [])
+          .slice(0, 5)
+          .map((p) => buildPhotoUrl(p.name));
+
+        // Opening hours as JSON string
+        const hours = place.currentOpeningHours?.weekdayDescriptions || [];
+
+        const vendorData = {
+          name: place.displayName.text,
+          address: place.formattedAddress,
+          category,
+          source: 'google',
+          google_id: place.id,
+          rating: place.rating,
+          review_count: place.userRatingCount,
+          is_vetted: true,
+          upvote_count: 0,
+          phone: place.nationalPhoneNumber || '',
+          hours: JSON.stringify(hours),
+          photos: JSON.stringify(photos),
+          latitude: place.location?.latitude || 0,
+          longitude: place.location?.longitude || 0,
+          last_synced: new Date().toISOString(),
+        };
+
+        // Check if google_id already exists (upsert)
         const existing = await serverListDocuments(APPWRITE_API_KEY, 'vendors', [
           Query.equal('google_id', place.id),
         ]);
 
         if (existing.documents && existing.documents.length > 0) {
-          // Update existing: refresh rating and review count
-          await serverUpdateDocument(APPWRITE_API_KEY, 'vendors', existing.documents[0].$id, {
-            rating: place.rating,
-            review_count: place.userRatingCount,
-            last_synced: new Date().toISOString(),
-          });
+          // Update: refresh rating, review count, photos, hours, phone
+          const { source, google_id, upvote_count, ...updateData } = vendorData;
+          void source; void google_id; void upvote_count;
+          await serverUpdateDocument(APPWRITE_API_KEY, 'vendors', existing.documents[0].$id, updateData);
           updated++;
         } else {
-          // Create new vendor
-          await serverCreateDocument(APPWRITE_API_KEY, 'vendors', {
-            name: place.displayName.text,
-            address: place.formattedAddress,
-            category,
-            source: 'google',
-            google_id: place.id,
-            rating: place.rating,
-            review_count: place.userRatingCount,
-            is_vetted: true, // Google 4+ star spots are auto-vetted
-            upvote_count: 0,
-            last_synced: new Date().toISOString(),
-          });
+          await serverCreateDocument(APPWRITE_API_KEY, 'vendors', vendorData);
           created++;
         }
       }

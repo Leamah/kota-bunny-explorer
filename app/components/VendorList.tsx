@@ -14,6 +14,7 @@ interface Vendor {
   source: 'google' | 'community';
   is_vetted: boolean;
   upvote_count: number;
+  photos: string;
 }
 
 const VENDORS_COLLECTION_ID = 'vendors';
@@ -104,6 +105,7 @@ export default function VendorList({ category, search = '', sortBy = 'rating' }:
           reviewCount={v.review_count}
           source={v.source}
           upvotes={v.upvote_count}
+          photos={v.photos}
         />
       ))}
     </div>

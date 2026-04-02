@@ -10,6 +10,7 @@ interface VendorCardProps {
   reviewCount: number;
   source: 'google' | 'community';
   upvotes?: number;
+  photos?: string;
 }
 
 function Stars({ rating }: { rating: number }) {
@@ -37,42 +38,63 @@ export default function VendorCard({
   reviewCount,
   source,
   upvotes = 0,
+  photos,
 }: VendorCardProps) {
+  const photoList: string[] = photos ? (() => { try { return JSON.parse(photos); } catch { return []; } })() : [];
+  const thumbnail = photoList[0] || null;
+
   return (
     <Link href={`/vendor/${id}`} className="block">
-      <div className="bg-white rounded-2xl shadow-md p-6 vendor-card h-full">
-        <div className="flex items-start justify-between mb-3">
-          <h3 className="heading-bold text-xl text-mzansi-black">{name}</h3>
-          <span
-            className={`text-xs font-bold uppercase px-2 py-1 rounded-full shrink-0 ml-2 ${
-              source === 'google'
-                ? 'bg-blue-100 text-blue-700'
-                : 'bg-mzansi-yellow text-mzansi-black'
-            }`}
-          >
-            {source === 'google' ? 'Google' : 'Community'}
-          </span>
-        </div>
-
-        <p className="text-gray-500 text-sm font-sans mb-3">{address}</p>
-
-        <div className="flex items-center gap-2 mb-4">
-          <Stars rating={rating} />
-          <span className="text-sm font-sans text-gray-600">
-            {rating.toFixed(1)} ({reviewCount} reviews)
-          </span>
-        </div>
-
-        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-          <div className="flex items-center gap-1.5 text-sm font-semibold text-mzansi-teal font-sans">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-            </svg>
-            {upvotes}
+      <div className="bg-white rounded-2xl shadow-md overflow-hidden vendor-card h-full">
+        {thumbnail ? (
+          <img
+            src={thumbnail}
+            alt={name}
+            className="w-full h-48 object-cover"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-48 bg-gradient-to-br from-mzansi-yellow to-mzansi-red flex items-center justify-center">
+            <span className="text-white heading-bold text-3xl opacity-60">
+              {name.charAt(0)}
+            </span>
           </div>
-          <span className="text-xs text-mzansi-red font-sans font-semibold uppercase tracking-wider">
-            View Street Talk &rarr;
-          </span>
+        )}
+
+        <div className="p-5">
+          <div className="flex items-start justify-between mb-2">
+            <h3 className="heading-bold text-lg text-mzansi-black leading-tight">{name}</h3>
+            <span
+              className={`text-xs font-bold uppercase px-2 py-1 rounded-full shrink-0 ml-2 ${
+                source === 'google'
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'bg-mzansi-yellow text-mzansi-black'
+              }`}
+            >
+              {source === 'google' ? 'Google' : 'Community'}
+            </span>
+          </div>
+
+          <p className="text-gray-500 text-sm font-sans mb-3 line-clamp-1">{address}</p>
+
+          <div className="flex items-center gap-2 mb-4">
+            <Stars rating={rating} />
+            <span className="text-sm font-sans text-gray-600">
+              {rating.toFixed(1)} ({reviewCount})
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+            <div className="flex items-center gap-1.5 text-sm font-semibold text-mzansi-teal font-sans">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+              </svg>
+              {upvotes}
+            </div>
+            <span className="text-xs text-mzansi-red font-sans font-semibold uppercase tracking-wider">
+              View Street Talk &rarr;
+            </span>
+          </div>
         </div>
       </div>
     </Link>
