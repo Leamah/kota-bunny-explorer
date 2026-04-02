@@ -31,6 +31,14 @@ const BLOCKED_PLACE_IDS = new Set([
   'ChIJHbey9tYJlR4R6f85miEssiM', // SOWETO TOWERS
   'ChIJ46Fx206nlR4RyE6JsVNiNOg', // Hector Pieterson Memorial
   'ChIJtw3EHtGmlR4RNmGYqk8QMUQ', // Credo Mutwa Cultural Village
+  'ChIJw5sXinsOlR4Rn3XUe5j-e7I', // Kota Zone (not a food place)
+  'ChIJ-Rz1KtBllR4RQMhVIss_lJw', // Kota Zone (Pretoria duplicate)
+  'ChIJg1uLgaoOlR4RVBhDdmrNs20', // Bay Leaf Restaurant
+  'ChIJJcctUaoOlR4R1zV-O4TT1pg', // Dosa Hut
+  'ChIJURl--qoOlR4RrtKXFUOSxSg', // World of Samoosas
+  'ChIJZ9wgozINlR4Rh2bpvjdlr5s', // Ozzy's Kitchen
+  'ChIJAzB5VpMNlR4RWiysADMMJM8', // Chowz Rosebank
+  'ChIJ845oJAMNlR4RMRTPZO3nCnE', // MY Diners Rosebank
 ]);
 
 // Auto-reject: names containing these keywords are not food spots
@@ -40,6 +48,7 @@ const REJECT_KEYWORDS = [
   'shopping centre', 'shopping center', 'petrol', 'garage', 'hotel',
   'guest house', 'lodge', 'resort', 'park', 'garden', 'village',
   'tower', 'stadium', 'gym', 'fitness',
+  'hollywoodbets', 'betting', 'casino', 'samoosa', 'dosa',
 ];
 
 function isBlockedPlace(placeId: string, placeName: string): boolean {
