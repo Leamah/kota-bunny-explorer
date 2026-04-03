@@ -15,7 +15,7 @@ export default function RecipesPage() {
         Weekly Recipes
       </h1>
       <p className="text-gray-500 font-sans mb-8">
-        Fresh drops every week. Easy subs, no fancy stuff. &quot;No polony? Use ham.&quot;
+        Fresh drops every week. Easy subs, no fancy stuff.
       </p>
       <div className="ndebele-border mb-8" />
       <RecipeList />
