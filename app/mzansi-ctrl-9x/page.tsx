@@ -9,7 +9,7 @@ export default function AdminPage() {
       <p className="text-gray-500 font-sans mb-8">Manage vendors and community submissions.</p>
       <div className="ndebele-border mb-8" />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <Link href="/mzansi-ctrl-9x/pending" className="block bg-white rounded-2xl shadow-md p-8 vendor-card text-center">
           <div className="w-16 h-16 bg-mzansi-yellow rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8 text-mzansi-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -28,6 +28,15 @@ export default function AdminPage() {
           </div>
           <h2 className="heading-bold text-xl text-mzansi-black mb-1">Manage Images</h2>
           <p className="text-gray-400 font-sans text-sm">Review, remove, and lock vendor photos</p>
+        </Link>
+        <Link href="/mzansi-ctrl-9x/articles" className="block bg-white rounded-2xl shadow-md p-8 vendor-card text-center">
+          <div className="w-16 h-16 bg-mzansi-red rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+          </div>
+          <h2 className="heading-bold text-xl text-mzansi-black mb-1">Manage Articles</h2>
+          <p className="text-gray-400 font-sans text-sm">Write and publish street food guides and recipes</p>
         </Link>
       </div>
     </div>

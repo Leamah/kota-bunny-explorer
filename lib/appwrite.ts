@@ -145,14 +145,24 @@ export async function serverUpdateDocument(apiKey: string, collectionId: string,
   return res.json();
 }
 
+export async function serverGetDocument(apiKey: string, collectionId: string, documentId: string) {
+  const res = await fetch(
+    `${ENDPOINT}/databases/${DATABASE_ID}/collections/${collectionId}/documents/${documentId}`,
+    { headers: serverHeaders(apiKey) }
+  );
+  return res.json();
+}
+
 // --- Query helpers (Appwrite REST API needs JSON objects) ---
 
 export const Query = {
   equal: (attribute: string, value: unknown) => ({ method: 'equal', attribute, values: Array.isArray(value) ? value : [value] }),
   greaterThanEqual: (attribute: string, value: unknown) => ({ method: 'greaterThanEqual', attribute, values: [value] }),
+  lessThanEqual: (attribute: string, value: unknown) => ({ method: 'lessThanEqual', attribute, values: [value] }),
   orderDesc: (attribute: string) => ({ method: 'orderDesc', attribute }),
   orderAsc: (attribute: string) => ({ method: 'orderAsc', attribute }),
   limit: (value: number) => ({ method: 'limit', values: [value] }),
+  search: (attribute: string, value: string) => ({ method: 'search', attribute, values: [value] }),
 };
 
 // --- Constants ---
