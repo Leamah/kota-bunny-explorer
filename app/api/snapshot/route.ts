@@ -39,6 +39,32 @@ const BLOCKED_PLACE_IDS = new Set([
   'ChIJZ9wgozINlR4Rh2bpvjdlr5s', // Ozzy's Kitchen
   'ChIJAzB5VpMNlR4RWiysADMMJM8', // Chowz Rosebank
   'ChIJ845oJAMNlR4RMRTPZO3nCnE', // MY Diners Rosebank
+  'ChIJ6xtFIWQLlR4RChCOo8m-oDA', // Spiceburg
+  'ChIJ-zMEA6sOlR4RSdXy2bstzaM', // Bismillah Restaurant-B1
+  'ChIJNa_uZWNnzB0RVv-g5Wj6Xo4', // Eastern Food Bazaar
+  'ChIJrdkWnWVnzB0RuMcoY0WJfYU', // Food Inn India Long Street
+  'ChIJ6Ymq5B5dzB0RCSiWWsfhq8w', // Sunrise Chip N Ranch
+  'ChIJ45x7iW9nzB0RISAfgVl5Blk', // Maharajah Indian Restaurant
+  'ChIJoQyUgCldzB0RPT4WAqeyWYI', // Shamani Indian Cuisine
+  'ChIJQyvixWZnzB0RXB9053Z-jFc', // The Village Idiot
+  'ChIJr1rgXlZDzB0Rl4sAU2qbLX8', // The Chilli Bar
+  'ChIJ610K8tJCzB0R5gqlFshWR8E', // Bihari
+  'ChIJpXE6LhdpzB0RxEVLB4-7WzA', // Indian Oven
+  'ChIJ-WD7IjEH9x4RyrGW825DcPY', // Glamwich
+  'ChIJFc1bMUQNlR4RKNvAsTdhZqQ', // Modern Tailors
+  'ChIJ_a6VcmomaAERQc6kG7fToLc', // Al-Hamra Restaurants
+  'ChIJBwwwkE3ytAERbCDFuRnioOA', // Vintage India
+  'ChIJUWGkBINnzB0Rjb6oo_xifjQ', // Curry Club
+  'ChIJs1p8CpS79h4RYDfrtnLH68o', // AGNI Indian Cuisine
+  'ChIJxfeQKPW89h4RuPIJiaso2Js', // Tandoor Clay Oven
+  'ChIJZcyOdYm89h4RU-_GGU_aIgw', // Coconut Grove Restaurant
+  'ChIJLSLGN1G89h4RHD1LUzr0X5Y', // Kara Nicchas Scottsville
+  'ChIJS6yGf9S99h4RAbrF-hcKj0k', // Willowton Palace
+  'ChIJx314kEi79h4RGVm16o603Fg', // Roshnies Diner
+  'ChIJJV9rPbS99h4R-SL-kJ6wiVs', // THE CURRY POT
+  'ChIJb_-v9pG79h4RkBEZXqLQ-Oc', // Kara Nicchas Raisethorpe
+  'ChIJ0Uw5lJe89h4RdVKqKsbL0R8', // Kara Nicchas Victoria Rd
+  'ChIJ8T6riIG99h4RgAPH48A_3eI', // Budz & Bunnies
 ]);
 
 // Auto-reject: names containing these keywords are not food spots
