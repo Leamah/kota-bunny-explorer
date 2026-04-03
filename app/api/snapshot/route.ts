@@ -97,14 +97,14 @@ const FIELD_MASK = [
   'places.priceLevel',
 ].join(',');
 
-// Google price levels to display strings
+// Google price levels to Rand ranges
 function mapPriceLevel(level?: string): string {
   switch (level) {
     case 'PRICE_LEVEL_FREE': return 'Free';
-    case 'PRICE_LEVEL_INEXPENSIVE': return 'R';
-    case 'PRICE_LEVEL_MODERATE': return 'RR';
-    case 'PRICE_LEVEL_EXPENSIVE': return 'RRR';
-    case 'PRICE_LEVEL_VERY_EXPENSIVE': return 'RRRR';
+    case 'PRICE_LEVEL_INEXPENSIVE': return 'R10–R50';
+    case 'PRICE_LEVEL_MODERATE': return 'R50–R100';
+    case 'PRICE_LEVEL_EXPENSIVE': return 'R100–R200';
+    case 'PRICE_LEVEL_VERY_EXPENSIVE': return 'R200+';
     default: return '';
   }
 }
