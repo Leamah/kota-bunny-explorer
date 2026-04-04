@@ -4,6 +4,7 @@ import "./globals.css";
 import AppwritePing from "./components/AppwritePing";
 import Navbar from "./components/Navbar";
 import Link from "next/link";
+import { Analytics } from '@vercel/analytics/next';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -108,6 +109,7 @@ export default function RootLayout({
         <div className="ndebele-border" />
         <Navbar />
         <main className="flex-1">{children}</main>
+        <Analytics />
         <footer className="bg-mzansi-black text-white py-8">
           <div className="ndebele-border mb-6" />
           <div className="max-w-6xl mx-auto px-4">
