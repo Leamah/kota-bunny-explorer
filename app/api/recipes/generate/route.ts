@@ -8,10 +8,22 @@ const DATABASE_ID = 'kota-bunny-db';
 const RECIPES_COLLECTION_ID = 'recipes';
 const CRON_SECRET = process.env.CRON_SECRET || '';
 
-export async function POST(request: Request) {
-  // Protect the endpoint with a secret so only Vercel Cron or you can trigger it
+function isAuthorized(request: Request) {
   const authHeader = request.headers.get('authorization');
-  if (CRON_SECRET && authHeader !== `Bearer ${CRON_SECRET}`) {
+  return !CRON_SECRET || authHeader === `Bearer ${CRON_SECRET}`;
+}
+
+// Vercel Cron fires GET — this lets the weekly schedule work
+export async function GET(request: Request) {
+  return generateRecipe(request);
+}
+
+export async function POST(request: Request) {
+  return generateRecipe(request);
+}
+
+async function generateRecipe(request: Request) {
+  if (!isAuthorized(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
